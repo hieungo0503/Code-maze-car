@@ -51,7 +51,7 @@ class SimplePID{
      u = kp*e + kd*dedt + ki*eintegral;
 
     // motor power
-    pwr = max(min(70,u),-70);
+    pwr = max(min(100,u),-100);
 
  eprev = e;
  
@@ -153,12 +153,9 @@ void setup()
   {
     ReadSensors();
   }
-
+  
+  //Go_straight_SETUP();
   }
-
-
-
-
 
 void loop()
 {
@@ -177,20 +174,19 @@ void loop()
 
     ReadSensors();
     walls();
-
-    
     
     if(leftwall == true && rightwall == true && frontwall == false) { //go straight with wall
         //PID to go straight bettwen two wall
         for(int k = 0; k < NMOTORS; k++){
         int dir[]={-1,1};
         // evaluate the control signal
-        pid[k].setParams(13,2.5,0,100);
+        pid[k].setParams(12,3.5,0,100);
         pid[k].evalu(leftSensor,rightSensor,deltaT,pwr,1);
         // signal the motor
         setMotor(dir[k],pwr,pwm[k],in1[k],in2[k],0);  
     }      
     }
+
     if(leftwall == false && rightwall == true && frontwall == true){
       turn_left();
       Stop();
@@ -206,23 +202,23 @@ void loop()
      
      Go_straight_NO_wall();
 
-
 }
+
 void setMotor(int dir, int pwmVal, int pwm, int in1, int in2,bool check_turn){   // check_turn
 if(check_turn == 0 ){
   if(pwm==10)
   {
    if(pwmVal >0)
-     analogWrite(pwm,100-abs(pwmVal));
+     analogWrite(pwm,120-abs(pwmVal));
    else
-     analogWrite(pwm,100+abs(pwmVal)); 
+     analogWrite(pwm,120+abs(pwmVal)); 
     }
   if(pwm == 11)
   {
    if(pwmVal >0)
-     analogWrite(pwm,100+abs(pwmVal));
+     analogWrite(pwm,120+abs(pwmVal));
    else
-     analogWrite(pwm,100-abs(pwmVal)); 
+     analogWrite(pwm,120-abs(pwmVal)); 
     }
 }
 else
@@ -240,7 +236,7 @@ else
     digitalWrite(in1,LOW);
     digitalWrite(in2,LOW);
   }  
-\
+
   //dir=-1 thì bánh phải tiến còn bánh trái lùi
   //dir = 1 thì ngược lại
 }
@@ -307,11 +303,11 @@ void turn_left()
     posi[i]=0;
   Serial.println("TURN LEFT");
   unsigned long times= millis();
-  while(millis() - times <1200) //
+  while(millis() - times <1000) //
   {
     int target[NMOTORS];
-  target[0] = 670; // 720
-  target[1] = 670; //
+  target[0] = 720; // 720
+  target[1] = 720; //
 
   // time difference
   long currT = micros();
@@ -329,7 +325,7 @@ void turn_left()
   // loop through the motors
   for(int k = 0; k < NMOTORS; k++){
     int pwr, dir;
-    pid[k].setParams(1,0.1,0,200);
+    pid[k].setParams(1,0.1,0,220);
     // evaluate the control signal
     pid[k].evalu_turn(pos[k],target[k],deltaT,pwr,dir);
     // signal the motor
@@ -343,11 +339,11 @@ void turn_right()
     posi[i]=0;
   Serial.println("TURN RIGHT");
   unsigned long times= millis();
-  while(millis() - times <1200) //
+  while(millis() - times <1000) //
   {
     int target[NMOTORS];
-  target[0] = -670;  // degree -700
-  target[1] = -670; //
+  target[0] = -720;  // degree -700
+  target[1] = -720; //
 
   // time difference
   long currT = micros();
@@ -365,7 +361,7 @@ void turn_right()
   // loop through the motors
   for(int k = 0; k < NMOTORS; k++){
     int pwr, dir;
-     pid[k].setParams(1,0.01,0,200);
+     pid[k].setParams(1,0.01,0,220);
     // evaluate the control signal
     pid[k].evalu_turn(pos[k],target[k],deltaT,pwr,dir);
     // signal the motor
@@ -400,6 +396,35 @@ void turn_right()
     if(frontwall == true)
     Stop();
   }
+
+  void Go_straight_SETUP()
+  {
+    posi[0]=0;  posi[1]=0;
+    while(frontwall== false)
+    {
+        ReadSensors();
+        walls();
+
+     currT = micros();
+     deltaT = ((float) (currT - prevT))/( 1.0e6 );
+     prevT = currT;
+
+    for(int k = 0; k < NMOTORS; k++){
+    int dir[]={-1,1}; //go straight
+    // evaluate the control signal
+    pid[k].setParams(2,0.1,0,100);
+
+    pid[k].evalu(posi[0],posi[1],deltaT,pwr,0);
+    // signal the motor
+    setMotor(dir[k],pwr,pwm[k],in1[k],in2[k],0);  
+     }
+    }
+
+    if(frontwall == true)
+      Stop();
+  }
+
+
   void Stop(){
     setMotor(0,0,pwm[0],in1[0],in2[0],0);
     setMotor(0,0,pwm[1],in1[1],in2[1],0);
