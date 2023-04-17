@@ -1,0 +1,27 @@
+[
+  {
+    "Sourcefile": null,
+    "Include": "",
+    "Includepath": "D:\\Arduino\\hardware\\arduino\\avr\\cores\\arduino"
+  },
+  {
+    "Sourcefile": null,
+    "Include": "",
+    "Includepath": "D:\\Arduino\\hardware\\arduino\\avr\\variants\\eightanaloginputs"
+  },
+  {
+    "Sourcefile": "c:\\Users\\acer\\Desktop\\car maze code\\MY_FINAL_CODE\\build\\sketch\\main.ino.cpp",
+    "Include": "NewPing.h",
+    "Includepath": "C:\\Users\\acer\\Documents\\Arduino\\libraries\\NewPing"
+  },
+  {
+    "Sourcefile": "c:\\Users\\acer\\Desktop\\car maze code\\MY_FINAL_CODE\\build\\sketch\\main.ino.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\acer\\Documents\\Arduino\\libraries\\NewPing\\NewPing.cpp",
+    "Include": "",
+    "Includepath": null
+  }
+]

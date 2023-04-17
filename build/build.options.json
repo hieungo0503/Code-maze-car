@@ -1,0 +1,12 @@
+{
+  "additionalFiles": "",
+  "builtInLibrariesFolders": "D:\\Arduino\\libraries",
+  "builtInToolsFolders": "D:\\Arduino\\tools-builder,D:\\Arduino\\hardware\\tools\\avr,C:\\Users\\acer\\AppData\\Local\\Arduino15\\packages",
+  "compiler.optimization_flags": "",
+  "customBuildProperties": "build.path=c:\\Users\\acer\\Desktop\\car maze code\\MY_FINAL_CODE\\build,build.warn_data_percentage=75,runtime.tools.avrdude.path=D:\\Arduino\\hardware\\tools\\avr,runtime.tools.avrdude-6.3.0-arduino17.path=D:\\Arduino\\hardware\\tools\\avr,runtime.tools.arduinoOTA.path=D:\\Arduino\\hardware\\tools\\avr,runtime.tools.arduinoOTA-1.3.0.path=D:\\Arduino\\hardware\\tools\\avr,runtime.tools.avr-gcc.path=D:\\Arduino\\hardware\\tools\\avr,runtime.tools.avr-gcc-7.3.0-atmel3.6.1-arduino7.path=D:\\Arduino\\hardware\\tools\\avr",
+  "fqbn": "arduino:avr:nano:cpu=atmega328old",
+  "hardwareFolders": "D:\\Arduino\\hardware,C:\\Users\\acer\\AppData\\Local\\Arduino15\\packages",
+  "otherLibrariesFolders": "C:\\Users\\acer\\Documents\\Arduino\\libraries",
+  "runtime.ide.version": "10819",
+  "sketchLocation": "c:\\Users\\acer\\Desktop\\car maze code\\MY_FINAL_CODE\\main.ino"
+}
