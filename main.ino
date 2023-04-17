@@ -156,7 +156,7 @@ void setup()
   
   //Go_straight_SETUP();
   }
-   char Array[]="LRR";
+   char Array[]="SSR";
     int j=0;
     bool left_check=false,right_check=false;
 void loop()
@@ -173,11 +173,47 @@ void loop()
       pos[k] = posi[k];
     }
   }
-  left_check=false;
-  right_check=false;
-  if(Array[j] == 'L'){}
+    if(leftwall == false && rightwall == false || leftwall == false && frontwall == false || rightwall == false && frontwall == false)
+    {
+        if(Array[j] == 'S'){
+          Go_straight_with_Wall();
+          Go_straight_NO_wall();
+          Go_straight_with_Wall();
+        }
+        else if( Array[j]== 'L')
+        {
+            turn_left();
+        }
+        else{
+          turn_right();
+        }
+      j++;
+    }
    
+   ReadSensors();
+    walls();
+    
+    Go_straight_with_Wall();
 
+    if(leftwall == false && rightwall == true && frontwall == true){
+      turn_left();
+      Stop();
+    }
+    if(leftwall == true && rightwall == false && frontwall == true){
+      turn_right();
+      Stop();
+    }
+    if(leftwall == false && rightwall == false && frontwall == true){ //ưu tiên rễ pải
+      turn_right(); 
+      Stop();
+    }
+    // if(leftwall == false && rightwall == false && frontwall == true){ // ưu tiên rẽ trái
+    //   turn_left();
+    //   Stop();
+    // }
+
+     
+     Go_straight_NO_wall();
    
 	
 	
@@ -416,7 +452,7 @@ void turn_right()
     delay(50);
   }
 void Go_straight_with_Wall(){
-	if(leftwall == true && rightwall == true && frontwall == false) { //go straight with wall
+	while(leftwall == true && rightwall == true && frontwall == false) { //go straight with wall
         //PID to go straight bettwen two wall
         for(int k = 0; k < NMOTORS; k++){
         int dir[]={-1,1};
@@ -425,7 +461,9 @@ void Go_straight_with_Wall(){
         pid[k].evalu(leftSensor,rightSensor,deltaT,pwr,1);
         // signal the motor
         setMotor(dir[k],pwr,pwm[k],in1[k],in2[k],0);  
-    }      
+    }   
+    if(leftwall == false || rightwall == false )   
+      break;
     }
 }
 void Left_priority()
@@ -478,7 +516,7 @@ void Right_priority()
     //   turn_left();
     //   Stop();
     // }
-    
+
      
      Go_straight_NO_wall();
 
