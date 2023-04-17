@@ -31,7 +31,7 @@ class SimplePID{
   void setParams(float kpIn, float kdIn, float kiIn, float umaxIn){
     kp = kpIn; kd = kdIn; ki = kiIn; umax = umaxIn;
   }
-
+ 
   // A function to compute the control signal
   void evalu(int value, int target, float deltaT, int &pwr, bool check){ //bool check to check for run with wall or not 
     // error
@@ -156,7 +156,9 @@ void setup()
   
   //Go_straight_SETUP();
   }
-
+   char Array[]="LRR";
+    int j=0;
+    bool left_check=false,right_check=false;
 void loop()
 {
 	 // time difference
@@ -171,36 +173,14 @@ void loop()
       pos[k] = posi[k];
     }
   }
+  left_check=false;
+  right_check=false;
+  if(Array[j] == 'L'){}
+   
 
-    ReadSensors();
-    walls();
-    
-    if(leftwall == true && rightwall == true && frontwall == false) { //go straight with wall
-        //PID to go straight bettwen two wall
-        for(int k = 0; k < NMOTORS; k++){
-        int dir[]={-1,1};
-        // evaluate the control signal
-        pid[k].setParams(12,3.5,0,100);
-        pid[k].evalu(leftSensor,rightSensor,deltaT,pwr,1);
-        // signal the motor
-        setMotor(dir[k],pwr,pwm[k],in1[k],in2[k],0);  
-    }      
-    }
-
-    if(leftwall == false && rightwall == true && frontwall == true){
-      turn_left();
-      Stop();
-    }
-    if(leftwall == true && rightwall == false && frontwall == true){
-      turn_right();
-      Stop();
-    }
-    if(leftwall == false && rightwall == false && frontwall == true){
-      turn_right();
-      Stop();
-    }
-     
-     Go_straight_NO_wall();
+   
+	
+	
 
 }
 
@@ -331,7 +311,9 @@ void turn_left()
     // signal the motor
     setMotor(dir,pwr,pwm[k],in1[k],in2[k],1);
   }
-  }}
+  }
+    left_check = true;
+  }
 
 void turn_right()
 {
@@ -367,7 +349,9 @@ void turn_right()
     // signal the motor
     setMotor(dir,pwr,pwm[k],in1[k],in2[k],1);
   }
-  }}
+    }
+      right_check = true;
+  }
   void Go_straight_NO_wall()
   {
     posi[0]=0;  posi[1]=0;
@@ -431,3 +415,71 @@ void turn_right()
     posi[0]=0;  posi[1]=0;
     delay(50);
   }
+void Go_straight_with_Wall(){
+	if(leftwall == true && rightwall == true && frontwall == false) { //go straight with wall
+        //PID to go straight bettwen two wall
+        for(int k = 0; k < NMOTORS; k++){
+        int dir[]={-1,1};
+        // evaluate the control signal
+        pid[k].setParams(12,3.5,0,100);
+        pid[k].evalu(leftSensor,rightSensor,deltaT,pwr,1);
+        // signal the motor
+        setMotor(dir[k],pwr,pwm[k],in1[k],in2[k],0);  
+    }      
+    }
+}
+void Left_priority()
+{
+   ReadSensors();
+    walls();
+    
+    Go_straight_with_Wall();
+
+    if(leftwall == false && rightwall == true && frontwall == true){
+      turn_left();
+      Stop();
+    }
+    if(leftwall == true && rightwall == false && frontwall == true){
+      turn_right();
+      Stop();
+    }
+    // if(leftwall == false && rightwall == false && frontwall == true){ //ưu tiên rễ pải
+    //   turn_right(); 
+    //   Stop();
+    // }
+    if(leftwall == false && rightwall == false && frontwall == true){ // ưu tiên rẽ trái
+      turn_left();
+      Stop();
+    }
+     
+     Go_straight_NO_wall();
+
+}
+void Right_priority()
+{
+   ReadSensors();
+    walls();
+    
+    Go_straight_with_Wall();
+
+    if(leftwall == false && rightwall == true && frontwall == true){
+      turn_left();
+      Stop();
+    }
+    if(leftwall == true && rightwall == false && frontwall == true){
+      turn_right();
+      Stop();
+    }
+    if(leftwall == false && rightwall == false && frontwall == true){ //ưu tiên rễ pải
+      turn_right(); 
+      Stop();
+    }
+    // if(leftwall == false && rightwall == false && frontwall == true){ // ưu tiên rẽ trái
+    //   turn_left();
+    //   Stop();
+    // }
+    
+     
+     Go_straight_NO_wall();
+
+}
