@@ -100,6 +100,7 @@ const int pwm[] = {10,11};
 const int in1[] = {6,8};
 const int in2[] = {7,9};
 
+
 // Globals
 long prevT = 0;
 volatile int posi[] = {0,0};
@@ -154,9 +155,9 @@ void setup()
     ReadSensors();
   }
   
-  //Go_straight_SETUP();
+  Go_straight_SETUP();
   }
-   char Array[]="SSR";
+   char Array[]="SRRS";
     int j=0;
     bool left_check=false,right_check=false;
 void loop()
@@ -173,49 +174,43 @@ void loop()
       pos[k] = posi[k];
     }
   }
+    ReadSensors();
+    walls();
+    
+    if( leftwall == false && frontwall == false &&frontwall == false)
+          Go_straight_SETUP();
+  
     if(leftwall == false && rightwall == false || leftwall == false && frontwall == false || rightwall == false && frontwall == false)
     {
         if(Array[j] == 'S'){
-          Go_straight_with_Wall();
-          Go_straight_NO_wall();
-          Go_straight_with_Wall();
+         Go_straight_NO_wall();
+         Go_straight_with_Wall();
+         Di_them_xiu(); 
         }
         else if( Array[j]== 'L')
         {
             turn_left();
+            Stop();
         }
         else{
           turn_right();
+          Stop();
         }
-      j++;
-    }
+      j++;  
+    } 
    
-   ReadSensors();
-    walls();
-    
-    Go_straight_with_Wall();
-
+    if(leftwall == false && rightwall == true && frontwall == false || leftwall == true && rightwall == false && frontwall == false){
+      Go_straight_NO_wall();
+    }
     if(leftwall == false && rightwall == true && frontwall == true){
       turn_left();
       Stop();
     }
+
     if(leftwall == true && rightwall == false && frontwall == true){
       turn_right();
       Stop();
     }
-    if(leftwall == false && rightwall == false && frontwall == true){ //ưu tiên rễ pải
-      turn_right(); 
-      Stop();
-    }
-    // if(leftwall == false && rightwall == false && frontwall == true){ // ưu tiên rẽ trái
-    //   turn_left();
-    //   Stop();
-    // }
-
-     
-     Go_straight_NO_wall();
-   
-	
 	
 
 }
@@ -424,7 +419,6 @@ void turn_right()
     {
         ReadSensors();
         walls();
-
      currT = micros();
      deltaT = ((float) (currT - prevT))/( 1.0e6 );
      prevT = currT;
@@ -453,6 +447,8 @@ void turn_right()
   }
 void Go_straight_with_Wall(){
 	while(leftwall == true && rightwall == true && frontwall == false) { //go straight with wall
+        ReadSensors();
+        walls();
         //PID to go straight bettwen two wall
         for(int k = 0; k < NMOTORS; k++){
         int dir[]={-1,1};
@@ -520,4 +516,39 @@ void Right_priority()
      
      Go_straight_NO_wall();
 
+}
+void Di_them_xiu(){
+    for(int i=0; i<2; i++)
+    posi[i]=0;
+  Serial.println("TURN RIGHT");
+  unsigned long times= millis();
+  while(millis() - times <1000) //
+  {
+    int target[NMOTORS];
+  target[0] = 600;  // degree -700
+  target[1] = -600; //
+
+  // time difference
+  long currT = micros();
+  float deltaT = ((float) (currT - prevT))/( 1.0e6 );
+  prevT = currT;
+
+  // Read the position in an atomic block to avoid a potential misread
+  int pos[NMOTORS];
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
+    for(int k = 0; k < NMOTORS; k++){
+      pos[k] = posi[k];
+    }
+  }
+  
+  // loop through the motors
+  for(int k = 0; k < NMOTORS; k++){
+    int pwr, dir;
+     pid[k].setParams(1,0.01,0,220);
+    // evaluate the control signal
+    pid[k].evalu_turn(pos[k],target[k],deltaT,pwr,dir);
+    // signal the motor
+    setMotor(dir,pwr,pwm[k],in1[k],in2[k],1);
+  }
+    }
 }
